@@ -1,18 +1,17 @@
 from abc import abstractmethod
 
+import numpy as np
+import sklearn
 from econml.dml import CausalForestDML
 from econml.dr import ForestDRLearner
 from econml.metalearners import DomainAdaptationLearner, SLearner, TLearner, XLearner
+
+### AutoML Hyperparam Optimization ###
+from flaml import AutoML
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 
 from .base import BaselineModel
-
-
-### AutoML Hyperparam Optimization ###
-from flaml import AutoML
-import numpy as np
-import sklearn
 
 
 def get_hpo_propensity_model(X: np.ndarray, t: np.ndarray) -> sklearn.base.BaseEstimator:

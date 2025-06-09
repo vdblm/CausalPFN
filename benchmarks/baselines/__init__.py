@@ -8,11 +8,11 @@ from .catenets import DragonNetBaseline, RANetBaseline, TarNetBaseline
 # econml baselines
 from .econml import (
     DALearnerBaseline,
+    ForestDMLBaseline,
+    ForestDRLearnerBaseline,
     SLearnerBaseline,
     TLearnerBaseline,
     XLearnerBaseline,
-    ForestDMLBaseline,
-    ForestDRLearnerBaseline,
 )
 
 # GRF

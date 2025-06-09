@@ -48,7 +48,6 @@ pip install causalpfn
 - tqdm
 - faiss-cpu
 - huggingface_hub
-- econml
 
 ## Quick Start
 

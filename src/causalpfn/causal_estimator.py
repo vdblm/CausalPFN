@@ -7,11 +7,10 @@ from typing import Dict, Literal
 import faiss
 import numpy as np
 import torch
-from econml.metalearners import SLearner
 from huggingface_hub import hf_hub_download
 from sklearn.decomposition import TruncatedSVD
 from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.preprocessing import FunctionTransformer
+from sklearn.preprocessing import FunctionTransformer, OneHotEncoder
 from tqdm import tqdm
 
 from .models import InContextModel
@@ -186,13 +185,13 @@ class CausalEstimator(ABC):
         if n_samples is not None:
             all_samples = np.zeros((X_query.shape[0], n_samples), dtype=X_query.dtype)
 
-        context_effects = self.stratifier.effect(X=X_context)
+        context_effects = self._estimate_cate_weak_learner(X_test=X_context)
         treatmentgroup_2_context_idx = np.where(np.isclose(t_context, 1))[0]
         controlgroup_2_context_idx = np.where(np.isclose(t_context, 0))[0]
         context_treatment_group_effects = context_effects[treatmentgroup_2_context_idx]
         context_control_group_effects = context_effects[controlgroup_2_context_idx]
 
-        query_effects = self.stratifier.effect(X=X_query)
+        query_effects = self._estimate_cate_weak_learner(X_test=X_query)
         query_indices_sorted = np.argsort(query_effects)
 
         index_treatment = faiss.IndexFlatL2(1)
@@ -384,6 +383,34 @@ class CausalEstimator(ABC):
         best_idx = torch.argmin(losses).item()
         self.temperature = temperatures[best_idx].item()
 
+    def _train_weak_learner(self, X: np.ndarray, t: np.ndarray, y: np.ndarray) -> GradientBoostingRegressor:
+        self.t_transformer = OneHotEncoder(sparse_output=False, categories="auto", drop="first")
+        T = self.t_transformer.fit_transform(t.reshape(-1, 1))
+        self._d_t = (T.shape[1],)
+        feat_arr = np.concatenate((X, 1 - np.sum(T, axis=1).reshape(-1, 1), T), axis=1)
+        self.stratifier = GradientBoostingRegressor(
+            n_estimators=100,
+            max_depth=6,
+            min_samples_leaf=int(X.shape[0] / 100),
+            random_state=111,
+        )
+        self.stratifier.fit(feat_arr, y)
+
+    def _estimate_cate_weak_learner(self, X_test: np.ndarray) -> np.ndarray:
+        if self.stratifier is None or self.t_transformer is None:
+            raise ValueError("Weak learner must be trained before estimating CATE.")
+
+        t0 = np.zeros(X_test.shape[0], dtype=X_test.dtype)
+        t1 = np.ones(X_test.shape[0], dtype=X_test.dtype)
+        T0 = self.t_transformer.transform(t0.reshape(-1, 1))
+        T1 = self.t_transformer.transform(t1.reshape(-1, 1))
+        X_T0 = np.concatenate((X_test, 1 - np.sum(T0, axis=1).reshape(-1, 1), T0), axis=1)
+        X_T1 = np.concatenate((X_test, 1 - np.sum(T1, axis=1).reshape(-1, 1), T1), axis=1)
+        Y0 = self.stratifier.predict(X_T0)
+        Y1 = self.stratifier.predict(X_T1)
+
+        return Y1 - Y0
+
     def fit(self, X: np.ndarray, t: np.ndarray, y: np.ndarray) -> "CausalEstimator":
         """
         Fit the model using the provided data.
@@ -409,15 +436,7 @@ class CausalEstimator(ABC):
         # train a lightweight stratification model to use whenever the context length is too large
         # this ensures that the data will be stratified and the context would only look at the most relevant samples
         # for the given query
-        self.stratifier = SLearner(
-            overall_model=GradientBoostingRegressor(
-                n_estimators=100,
-                max_depth=6,
-                min_samples_leaf=int(X.shape[0] / 100),
-                random_state=111,
-            )
-        )
-        self.stratifier.fit(X=self.X_train, Y=y, T=t)
+        self._train_weak_learner(X, t, y)
 
         if self.calibrate:
             self._calibrate_fn(
