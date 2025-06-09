@@ -6,7 +6,7 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-red?style=for-the-badge&logo=pytorch&logoColor=white)](https://pytorch.org/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-green?style=for-the-badge)](LICENSE)
 [![arXiv](https://img.shields.io/badge/arXiv-coming_soon-b31b1b?style=for-the-badge&logo=arxiv&logoColor=white)](#)
-[![PyPI](https://img.shields.io/badge/PyPI-CausalPFN-blue?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/causalpfn/0.1.0/)
+[![PyPI](https://img.shields.io/badge/PyPI-CausalPFN-blue?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/causalpfn/)
 
 **An easy-to-use library for causal effect estimation using transformer-based in-context learning**
 
@@ -27,11 +27,10 @@ CausalPFN leverages the power of transformer architectures for amortized causal 
 ### ✨ Key Features
 
 - **🚀 Fast Inference**: Amortized learning enables rapid causal effect estimation without retraining
-- **🎯 Versatile**: Supports both CATE (Conditional Average Treatment Effect) and ATE (Average Treatment Effect) estimation
-- **🔄 Amortized Learning**: Single model handles multiple causal estimation tasks
 - **🧮 Uncertainty Quantification**: Built-in calibration and confidence estimation
 - **⚡ GPU Accelerated**: Optimized for modern hardware with CUDA support
 - **📈 Benchmarked**: Competitive performance against state-of-the-art causal inference methods
+- **📊 Uplift-Modelling**: Supports treatment effect estimation for personalized decision-making in real-world applications
 
 ## Installation
 
@@ -42,7 +41,7 @@ pip install causalpfn
 
 ### Requirements
 - Python 3.10+
-- PyTorch 2.0+
+- PyTorch 2.3+
 - NumPy
 - scikit-learn
 - tqdm
@@ -109,21 +108,21 @@ ate_hat = causalpfn_ate.estimate_ate()
 pehe = np.sqrt(np.mean((cate_hat - tau_test) ** 2))
 ate_rel_error = np.abs((ate_hat - true_ate()) / true_ate())
 
-print(f"📊 Results:")
+print(f"Results:")
 print(f"ATE Relative Error: {ate_rel_error:.4f}")
 print(f"PEHE: {pehe:.4f}")
-print(f"⚡ CATE estimation time per 1000 samples: {cate_time / (len(X) / 1000):.4f}s")
+print(f"CATE estimation time per 1000 samples: {cate_time / (len(X) / 1000):.4f}s")
 ```
 
 ## Examples
 
-Explore our comprehensive notebook collection below. Before running the notebooks, make sure to install the additional dependencies via `pip install .[dev]`.
+Explore our notebook collection below. Before running the notebooks, make sure to install the additional dependencies via `pip install .[dev]`.
 
 | Notebook | Description | Features |
 |----------|-------------|----------|
-| [🎯 Causal Effect Estimation](notebooks/causal_effect.ipynb) | Compare CausalPFN with baseline methods | CATE/ATE estimation, benchmarking |
-| [📈 Hillstrom Marketing](notebooks/hillstrom_marketing.ipynb) | Uplift modeling case study | Real-world marketing application |
-| [🎲 Calibration Analysis](notebooks/calibration.ipynb) | Uncertainty quantification demo | Confidence intervals, calibration |
+| [Causal Effect Estimation](notebooks/causal_effect.ipynb) | Compare CausalPFN with baseline methods | CATE/ATE estimation, benchmarking |
+| [Hillstrom Marketing](notebooks/hillstrom_marketing.ipynb) | Uplift modeling case study | Real-world marketing application |
+| [Calibration Analysis](notebooks/calibration.ipynb) | Uncertainty quantification demo | Confidence intervals, calibration |
 
 ## Performance Benchmark
 
