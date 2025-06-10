@@ -4,10 +4,10 @@
   <a href="https://web.cs.toronto.edu/" target="_blank">
     <img src="https://raw.githubusercontent.com/vdblm/causalpfn/main/assets/uoft_logo.jpg" alt="Logo 1" height="60">
   </a>
-  <a href="https://link2.com" target="_blank">
+  <a href="https://layer6.ai/" target="_blank">
     <img src="https://raw.githubusercontent.com/vdblm/causalpfn/main/assets/layer6.png" alt="Logo 2" height="60">
   </a>
-  <a href="https://link3.com" target="_blank">
+  <a href="https://vectorinstitute.ai/" target="_blank">
     <img src="https://raw.githubusercontent.com/vdblm/causalpfn/main/assets/vector_institute.jpg" alt="Logo 3" height="60">
   </a>
 </p>
