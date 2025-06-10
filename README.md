@@ -1,4 +1,4 @@
-# CausalPFN <span style="font-size:70%">(Amortized Causal Effect Estimation via In-Context Learning)</span>
+# CausalPFN <span style="font-size:50%">(Amortized Causal Effect Estimation via In-Context Learning)</span>
 
 <div align="center">
 
