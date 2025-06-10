@@ -20,9 +20,9 @@
 
 CausalPFN leverages the power of transformer architectures for amortized causal effect estimation, enabling fast and accurate inference across diverse causal scenarios without the need for retraining. Our approach combines the flexibility of in-context learning with the rigor of causal inference.
 
-<div align="center">
-  <img src="./assets/main_figure.jpg" alt="CausalPFN Architecture" width="90%"/>
-</div>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/vdblm/causalpfn/main/assets/main_figure.jpg" alt="CausalPFN Results" width="90%">
+</p>
 
 ### ✨ Key Features
 
@@ -120,22 +120,22 @@ Explore our notebook collection below. Before running the notebooks, make sure t
 
 | Notebook | Description | Features |
 |----------|-------------|----------|
-| [Causal Effect Estimation](notebooks/causal_effect.ipynb) | Compare CausalPFN with baseline methods | CATE/ATE estimation, benchmarking |
-| [Hillstrom Marketing](notebooks/hillstrom_marketing.ipynb) | Uplift modeling case study | Real-world marketing application |
-| [Calibration Analysis](notebooks/calibration.ipynb) | Uncertainty quantification demo | Confidence intervals, calibration |
+| [Causal Effect Estimation](https://github.com/vdblm/CausalPFN/blob/main/notebooks/causal_effect.ipynb) | Compare CausalPFN with baseline methods | CATE/ATE estimation, benchmarking |
+| [Hillstrom Marketing](https://github.com/vdblm/CausalPFN/blob/main/notebooks/hillstrom_marketing.ipynb) | Uplift modeling case study | Real-world marketing application |
+| [Calibration Analysis](https://github.com/vdblm/CausalPFN/blob/main/notebooks/calibration.ipynb) | Uncertainty quantification demo | Confidence intervals, calibration |
 
 ## Performance Benchmark
 
 
 <p align="center">
-  <img src="./assets/rank_vs_time.png" alt="CausalPFN Results" width="50%">
+  <img src="https://raw.githubusercontent.com/vdblm/causalpfn/main/assets/rank_vs_time.png" alt="CausalPFN Results" width="50%">
 </p>
 
 *Time vs. Performance. Comparison across 130 causal inference tasks from IHDP, ACIC, and Lalonde. CausalPFN achieves the best average rank (by precision in estimation of heterogeneous effect) while being much faster than other baselines.*
 
 ## Reproducibility
 
-To fully reproduce the paper results, see the [REPRODUCE](REPRODUCE.md) file.
+To fully reproduce the paper results, see the [REPRODUCE](https://github.com/vdblm/CausalPFN/blob/main/REPRODUCE.md) file.
 
 ## Citation
 
