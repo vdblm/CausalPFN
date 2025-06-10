@@ -1,11 +1,11 @@
-# CausalPFN: Amortized Causal Effect Estimation via In-Context Learning
+# CausalPFN <span style="font-size:70%">(Amortized Causal Effect Estimation via In-Context Learning)</span>
 
 <div align="center">
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-red?style=for-the-badge&logo=pytorch&logoColor=white)](https://pytorch.org/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-green?style=for-the-badge)](LICENSE)
-[![arXiv](https://img.shields.io/badge/arXiv-coming_soon-b31b1b?style=for-the-badge&logo=arxiv&logoColor=white)](#)
+[![arXiv](https://img.shields.io/badge/arXiv-2506.07918-b31b1b.svg?style=for-the-badge&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2506.07918)
 [![PyPI](https://img.shields.io/badge/PyPI-CausalPFN-blue?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/causalpfn/)
 
 **An easy-to-use library for causal effect estimation using transformer-based in-context learning**
@@ -15,6 +15,8 @@
 </div>
 
 ---
+
+This library is is used to produce the results in our paper [CausalPFN: Amortized Causal Effect Estimation via In-Context Learning](https://arxiv.org/abs/2506.07918).
 
 ## 🌟 Overview
 
@@ -135,7 +137,7 @@ Explore our notebook collection below. Before running the notebooks, make sure t
 
 ## Reproducibility
 
-To fully reproduce the paper results, see the [REPRODUCE](https://github.com/vdblm/CausalPFN/blob/main/REPRODUCE.md) file.
+To fully reproduce the [paper](https://arxiv.org/abs/2506.07918) results, see the [REPRODUCE](https://github.com/vdblm/CausalPFN/blob/main/REPRODUCE.md) file.
 
 ## Citation
 
