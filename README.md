@@ -1,4 +1,16 @@
-# CausalPFN <span style="font-size:40%">(Amortized Causal Effect Estimation via In-Context Learning)</span>
+# CausalPFN <span style="font-size:70%">(Amortized Causal Effect Estimation via In-Context Learning)</span>
+
+<p align="center">
+  <a href="https://web.cs.toronto.edu/" target="_blank">
+    <img src="https://raw.githubusercontent.com/vdblm/causalpfn/main/assets/uoft_logo.jpg" alt="Logo 1" height="60">
+  </a>
+  <a href="https://link2.com" target="_blank">
+    <img src="https://raw.githubusercontent.com/vdblm/causalpfn/main/assets/layer6.png" alt="Logo 2" height="60">
+  </a>
+  <a href="https://link3.com" target="_blank">
+    <img src="https://raw.githubusercontent.com/vdblm/causalpfn/main/assets/vector_institute.jpg" alt="Logo 3" height="60">
+  </a>
+</p>
 
 <div align="center">
 
@@ -17,6 +29,8 @@
 ---
 
 This library is is used to produce the results in our paper [CausalPFN: Amortized Causal Effect Estimation via In-Context Learning](https://arxiv.org/abs/2506.07918).
+
+
 
 ## 🌟 Overview
 
