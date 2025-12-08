@@ -147,7 +147,7 @@ Explore our notebook collection below. Before running the notebooks, make sure t
   <img src="https://raw.githubusercontent.com/vdblm/causalpfn/main/assets/rank_vs_time.png" alt="CausalPFN Results" width="50%">
 </p>
 
-*Time vs. Performance. Comparison across 130 causal inference tasks from IHDP, ACIC, and Lalonde. CausalPFN achieves the best average rank (by precision in estimation of heterogeneous effect) while being much faster than other baselines.*
+*Time vs. Performance. Comparison across 310 causal inference tasks from IHDP, ACIC, and Lalonde. CausalPFN achieves the best average rank (by precision in estimation of heterogeneous effect) while being much faster than other baselines.*
 
 ## Reproducibility
 
