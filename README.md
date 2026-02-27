@@ -138,6 +138,7 @@ Explore our notebook collection below. Before running the notebooks, make sure t
 |----------|-------------|----------|
 | [Causal Effect Estimation](https://github.com/vdblm/CausalPFN/blob/main/notebooks/causal_effect.ipynb) | Compare CausalPFN with baseline methods | CATE/ATE estimation, benchmarking |
 | [Hillstrom Marketing](https://github.com/vdblm/CausalPFN/blob/main/notebooks/hillstrom_marketing.ipynb) | Uplift modeling case study | Real-world marketing application |
+| [Targeted Experiments with CausalPFN](https://colab.research.google.com/drive/1IK51GZWaWnSGofk7kQRm4zegE4I33R0R?usp=sharing) | Reduce the cost of A/B testing | Real-world marketing application |
 | [Calibration Analysis](https://github.com/vdblm/CausalPFN/blob/main/notebooks/calibration.ipynb) | Uncertainty quantification demo | Confidence intervals, calibration |
 
 ## Performance Benchmark
