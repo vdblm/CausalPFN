@@ -1,0 +1,90 @@
+_target_: causalpfn.training.priors.BackdoorDGPMetaDataset
+X_y0_E_y0_y1_E_y1_generator:
+  _target_: causalpfn.training.priors.table_generators.SyntheticTableGenerator
+  device: ${..device}
+  n_layer_dist:
+    _target_: causalpfn.training.priors.DeepTruncNormLogScaledSampler
+    mean_max: 10
+    mean_min: 1
+    is_int: true
+    min_val: 2
+  n_hidden_dist:
+    _target_: causalpfn.training.priors.DeepTruncNormLogScaledSampler
+    mean_max: 50
+    mean_min: 5
+    is_int: true
+    min_val: 4
+  dense_prob_dist:
+    _target_: causalpfn.training.priors.UniformSampler
+    low: 1
+    high: 1
+  init_std_dist:
+    _target_: causalpfn.training.priors.DeepTruncNormLogScaledSampler
+    mean_max: 3.0
+    mean_min: 0.01
+    is_int: false
+    min_val: 0.0
+  noise_std_dist:
+    _target_: causalpfn.training.priors.DeepTruncNormLogScaledSampler
+    mean_max: 0.5
+    mean_min: 0.0001
+    is_int: false
+    min_val: 0.0
+  pre_sample_prob: 0.5
+  n_block_max_dist: null
+  categorical_columns_prob: 0.5
+  categorical_columns_ordered_prob: 0.5
+  independent_prob: 0.0
+T_given_X_generator:
+  _target_: causalpfn.training.priors.table_generators.SyntheticTableGenerator
+  device: ${..device}
+  n_layer_dist:
+    _target_: causalpfn.training.priors.DeepTruncNormLogScaledSampler
+    mean_max: 10
+    mean_min: 1
+    is_int: true
+    min_val: 2
+  noise_std_dist:
+    _target_: causalpfn.training.priors.DeepTruncNormLogScaledSampler
+    mean_max: 0.5
+    mean_min: 0.0001
+    is_int: false
+    min_val: 0.0
+  n_hidden_dist:
+    _target_: causalpfn.training.priors.DeepTruncNormLogScaledSampler
+    mean_max: 50
+    mean_min: 5
+    is_int: true
+    min_val: 4
+  dense_prob_dist:
+    _target_: causalpfn.training.priors.UniformSampler
+    low: 1
+    high: 1
+  init_std_dist:
+    _target_: causalpfn.training.priors.DeepTruncNormLogScaledSampler
+    mean_max: 3.0
+    mean_min: 0.01
+    is_int: false
+    min_val: 0.0
+  n_block_max_dist: null
+  categorical_columns_prob: 0.0
+  categorical_columns_ordered_prob: 0.0
+  independent_prob: 0.11
+  linear_probability: 0.1
+  linear_weights_std: 1.0
+max_n_covariates: 98
+layer_norm_covariates_prob: 0.5
+n_samples: 2048
+overlap_dist:
+  _target_: causalpfn.training.priors.UniformSampler
+  low: 0.5
+  high: 1
+treatment_standardize_p: 0.8
+degree_heterogeneity_dist:
+    _target_: causalpfn.training.priors.UniformSampler
+    low: 0.7
+    high: 1
+device: cpu
+ate_scale_dist: null
+post_padding_n_cols: 99
+name: synthetic_backdoor

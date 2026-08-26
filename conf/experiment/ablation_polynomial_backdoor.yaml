@@ -1,0 +1,17 @@
+# @package _global_
+defaults:
+  - /meta_dataset@train_meta_dataset: polynomial_backdoor
+  - /callbacks@callbacks.eval_cate: eval_cate_simple
+  - _self_
+  - /callbacks@callbacks.checkpoint: checkpoint # add the checkpointing callback
+
+train_meta_dataset:
+  device: cpu
+  n_samples: 2048
+
+trainer:
+  max_epochs: 300
+
+wandb:
+  tags:
+    experiment: ablation_polynomial_backdoor

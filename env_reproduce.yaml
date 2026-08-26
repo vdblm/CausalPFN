@@ -39,9 +39,7 @@ dependencies:
       - schedulefree==1.4.1
       - scikit-uplift==0.5.1
       - shap==0.43.0
-      - openml==0.15.1
       - scikit-learn==1.5.2
-      - gdown==5.2.0
       - pytest==8.3.5
       - pytest-cov==6.1.1
       - black==25.1.0

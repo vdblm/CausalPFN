@@ -1,0 +1,9 @@
+defaults:
+  - _self_
+
+_target_: causalpfn.training.callbacks.Checkpoint
+callback_name: checkpoint
+frequency: 1
+top_k: 2
+checkpoint_root: ${out_dir}/checkpoints/ # destination root for newly written checkpoints
+checkpoint_dir_name: null # automatically generate

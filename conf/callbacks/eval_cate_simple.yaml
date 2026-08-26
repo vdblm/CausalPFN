@@ -1,0 +1,17 @@
+defaults:
+  - /eval_dataset@eval_datasets.sinusoidal: sinusoidal
+  - /eval_dataset@eval_datasets.cubic: cubic
+  - _self_
+
+_target_: causalpfn.training.callbacks.EvalCATE
+callback_name: eval_cate
+frequency: 1
+cate_estimator_partial:
+  _target_: causalpfn.causal_estimator.CATEEstimator
+  _partial_: true
+  model_path: null
+  n_folds: 2 # the number of folds used for validating the model
+  device: ${default_device}
+  max_context_length: 4096 # NOTE: set to as large as your GPU can handle
+  max_query_length: 8192
+  calibrate: false

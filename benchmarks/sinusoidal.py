@@ -1,44 +1,31 @@
-# A synthetic polynomial dataset for evaluating CATE estimation methods.
+# A synthetic sinusoidal dataset for evaluating CATE estimation methods.
 
 from typing import List, Tuple
 
 import numpy as np
 
-from .base import (
-    ATE_Dataset,
-    CATE_Dataset,
-    EvalDatasetCatalog,
-    GeneralizedLinearDataset,
-    SamplerType,
-    UniformIntegerSampler,
-)
+from .base import ATE_Dataset, CATE_Dataset, EvalDatasetCatalog, GeneralizedLinearDataset, SamplerType
 
 
-class PolynomialDataset(GeneralizedLinearDataset, EvalDatasetCatalog):
+class SinusoidalDataset(GeneralizedLinearDataset, EvalDatasetCatalog):
 
     def __init__(
         self,
-        n_tables: int = 50,
-        test_ratio: float = 0.2,
+        n_tables: int,
+        test_ratio: float,
+        frequency_sampler: List[SamplerType] | SamplerType,
         *args,
-        degree_sampler: List[SamplerType] | SamplerType = UniformIntegerSampler(2, 4),
         seed: int = 42,
-        standardize_covariates: bool = True,
         **kwargs,
     ) -> None:
-        GeneralizedLinearDataset.__init__(
-            self,
-            *args,
-            standardize_covariates=standardize_covariates,
-            **kwargs,
-        )
-        EvalDatasetCatalog.__init__(self, n_tables=n_tables, name="Polynomial")
+        GeneralizedLinearDataset.__init__(self, *args, **kwargs)
+        EvalDatasetCatalog.__init__(self, n_tables=n_tables, name="Sinusoidal")
 
-        # for the degree
-        if isinstance(degree_sampler, list):
-            self.degree_sampler = degree_sampler
+        # for the frequency
+        if isinstance(frequency_sampler, list):
+            self.frequency_sampler = frequency_sampler
         else:
-            self.degree_sampler = [degree_sampler]
+            self.frequency_sampler = [frequency_sampler]
 
         self.n_tables = n_tables
 
@@ -46,17 +33,17 @@ class PolynomialDataset(GeneralizedLinearDataset, EvalDatasetCatalog):
 
         self.seeds = [seed + i for i in range(self.n_tables)]
 
-    def sample_degree(self) -> int:
-        chosen_degree_sampler = self.degree_sampler[np.random.randint(len(self.degree_sampler))]
-        return chosen_degree_sampler((1,))[0]
+    def sample_frequency(self) -> int:
+        chosen_frequency_sampler = self.frequency_sampler[np.random.randint(len(self.frequency_sampler))]
+        return chosen_frequency_sampler((1,))[0]
 
     def covariates2features(self, covariates):
-        degree = self.sample_degree()
-        features = np.concatenate([covariates**i for i in range(1, degree + 1)], axis=1)
-        return features
+        return covariates
 
     def post_nonlinear(self, random_variable):
-        return random_variable
+        frequency = self.sample_frequency()
+        scale = np.std(random_variable)
+        return random_variable + np.sin(frequency * random_variable) * scale
 
     def __getitem__(self, index) -> Tuple[CATE_Dataset, ATE_Dataset]:
         if index >= self.n_tables:

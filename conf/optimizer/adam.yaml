@@ -1,0 +1,11 @@
+# @package _global_
+defaults:
+  - _self_
+optimizer:
+  _target_: torch.optim.Adam
+  _partial_: true
+  lr: 0.0001
+lr_scheduler:
+  _target_: torch.optim.lr_scheduler.CosineAnnealingLR
+  T_max: ${eval:'${trainer.max_epochs} * ${trainer.num_model_updates}'}
+  _partial_: true

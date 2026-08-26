@@ -2,6 +2,12 @@
 
 While the README was a simple showcase of the package, this is an in-depth step-by-step guide to reproduce the results in the paper. If your aim is to reproduce, you should follow this document.
 
+## Model training
+
+The causal training code used for CausalPFN is included in this repository. Follow [TRAINING.md](TRAINING.md) to install
+the training dependencies and run single- or multi-GPU training. We specifically warm-start the training with a predictive
+TabDPT checkpoint.
+
 ## Setting up the Environment
 
 The environment use for reproducibility is a little bit different, as we would need to run baselines in R and also CATENet which uses JaX. To do so, please run the following command to create a conda environment:

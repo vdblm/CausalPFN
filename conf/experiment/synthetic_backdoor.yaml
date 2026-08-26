@@ -1,0 +1,13 @@
+# @package _global_
+defaults:
+  - /meta_dataset@train_meta_dataset: synthetic_backdoor
+  - _self_
+
+train_meta_dataset:
+  device: cpu
+  n_samples: 2048
+
+# Add tags so that it is easier to filter the experiments in the W&B dashboard
+wandb:
+  tags:
+    experiment: synthetic_backdoor

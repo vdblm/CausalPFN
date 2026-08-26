@@ -1,0 +1,35 @@
+# @package _global_
+defaults:
+  - _self_
+
+model:
+  obj:
+    _target_: causalpfn.models.InContextModel
+    model:
+      _target_: causalpfn.models.TabDPTLongContextModel
+      dropout: 0.0
+      n_out: 10
+      nbins: 1024
+      nhead: 6
+      nhid: 768
+      ninp: 384
+      nlayers: 20
+      num_features: 100
+    model_config:
+      training:
+        dropout: ${...model.dropout}
+      model:
+        max_num_classes: ${...model.n_out}
+        nhead: ${...model.nhead}
+        emsize: ${...model.ninp}
+        nhid_factor: ${eval:'${...model.nhid} // ${...model.ninp}'}
+        nlayers: ${...model.nlayers}
+        max_num_features: ${...model.num_features}
+        nbins: ${...model.nbins}
+      env:
+        device: ${default_device}
+    sigma: ${sigma}
+trainer:
+  batch_size: 32
+  num_agg: 8
+compile: true

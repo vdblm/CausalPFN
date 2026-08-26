@@ -24,8 +24,6 @@ class InContextModel(nn.Module):
         self.model: nn.Module = model
         self.model_config = model_config
 
-        # self.prepare_input is to be called for each of the models to do any model-specific preprocessing
-        self.prepare_input = lambda x, y: (pad_x(x, model.num_features), y)
         self.nbins = model_config["model"]["nbins"]
         model_config["model_type"] = "tabdpt"
         model_config["sigma"] = sigma
@@ -42,6 +40,10 @@ class InContextModel(nn.Module):
         self.register_buffer("bin_edges", bin_edges)  # (nbins+1,)
         self.register_buffer("bin_width", bin_width)  # () – 0-D tensor
         self.register_buffer("bin_centers", bin_centers)  # (nbins,)
+
+    def prepare_input(self, x: torch.Tensor, y: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        """Apply model-specific input padding without capturing the model in a closure."""
+        return pad_x(x, self.model.num_features), y
 
     def _predict_mean(self, logits: torch.Tensor):
         probs = F.softmax(logits, dim=-1)
@@ -249,7 +251,7 @@ class InContextModel(nn.Module):
         y_context: torch.Tensor,
         X_query: torch.Tensor,
         t_query: torch.Tensor,
-        temperature: torch.Tensor, # shape: (num_temperatures, ),
+        temperature: torch.Tensor,  # shape: (num_temperatures, ),
         n_samples: int | None = None,
     ) -> torch.Tensor | Tuple[torch.Tensor, torch.Tensor]:
 
@@ -306,6 +308,22 @@ class InContextModel(nn.Module):
             t_query.unsqueeze(-1) == 1, samples * y1_scale + y1_shift, samples * y0_scale + y0_shift
         )
         return mean_shift_scaled, samples_shift_scaled
+
+    def get_param_groups(self):
+        """Return optimizer groups used by the published causal training run."""
+        if isinstance(self.model, TabDPTLongContextModel):
+            return [
+                {"params": self.model.transformer_encoder.parameters()},
+                {
+                    "params": [
+                        parameter
+                        for name, parameter in self.model.named_parameters()
+                        if not name.startswith("transformer_encoder")
+                    ],
+                    "weight_decay": 0.0,
+                },
+            ]
+        return self.model.parameters()
 
     @classmethod
     def load(cls, model_state: dict, model_config: dict) -> "InContextModel":

@@ -1,0 +1,21 @@
+# @package _global_
+defaults:
+  - _self_
+
+model:
+  path: null # Optional local checkpoint override for offline training.
+  repo_id: vdblm/causalpfn
+  filename: tabdpt_long_context.ckpt
+  revision: 83aad07da1cb077cfda4236878a1b07dc9f72a54
+  # SHA-256: 5efc25bcb3a1b29770ca56873704d9d6bf0dcb5e393cd48b10f0552d2a425d41
+  obj:
+    _target_: causalpfn.models.load_pretrained_in_context_model
+    ckpt_path: ${..path}
+    repo_id: ${..repo_id}
+    filename: ${..filename}
+    revision: ${..revision}
+    sigma: ${sigma}
+trainer:
+  batch_size: 32
+  num_agg: 8
+compile: true

@@ -1,0 +1,2 @@
+_target_: benchmarks.RealCauseLalondePSIDDataset
+n_tables: 10

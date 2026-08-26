@@ -1,9 +1,18 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any
 
 import numpy as np
 from sklearn.model_selection import StratifiedKFold, StratifiedShuffleSplit
+
+from causalpfn.synthetic import (
+    GaussianSampler,
+    GeneralizedLinearDataset,
+    LaplaceSampler,
+    SamplerType,
+    UniformIntegerSampler,
+    UniformSampler,
+)
 
 
 @dataclass

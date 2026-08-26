@@ -1,0 +1,34 @@
+_target_: causalpfn.training.priors.ablation.BackdoorSinusoidalMetaDataset
+x_dim_dist:
+  _target_: causalpfn.synthetic.UniformIntegerSampler
+  low: 5
+  high: 10
+noise_samplers:
+  _target_: omegaconf.OmegaConf.to_container # hack to turn ListConfig to a list
+  cfg:
+    - _target_: causalpfn.synthetic.GaussianSampler
+      loc: 0.0
+      scale: 0.1
+    - _target_: causalpfn.synthetic.UniformSampler
+      low: -0.1
+      high: 0.1
+    - _target_: causalpfn.synthetic.LaplaceSampler
+      loc: 0.0
+      scale: 0.1
+weight_sampler:
+  _target_: causalpfn.synthetic.UniformSampler
+  low: -10.
+  high: 6.
+covariate_sampler:
+  _target_: causalpfn.synthetic.UniformSampler
+  low: -3.
+  high: 5.
+frequency_sampler:
+  _target_: causalpfn.synthetic.UniformIntegerSampler
+  low: 0
+  high: 0
+standardize_treatment: true
+standardize_outcome: true
+n_samples: 2048
+name: linear_backdoor
+post_padding_n_cols: 99
