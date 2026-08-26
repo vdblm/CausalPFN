@@ -1,0 +1,11 @@
+# @package _global_
+defaults:
+  - _self_
+optimizer:
+  _target_: schedulefree.AdamWScheduleFree
+  _partial_: true
+  lr: 0.0005
+  weight_decay: 0.05
+  warmup_steps: 1000
+  betas: [0.98, 0.999]
+lr_scheduler: null

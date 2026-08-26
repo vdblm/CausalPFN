@@ -1,0 +1,20 @@
+defaults:
+  - trainer: default
+  - hydra: default
+  - wandb: disabled # set to enabled for wandb logging
+  - resume_training: disabled
+  - optimizer: schedulefree_adamw
+  - _self_
+  - model: tabdpt_long_context_pretrained
+  - override hydra/hydra_logging: none # hack to fix the logging code
+  - override hydra/job_logging: none # hack to fix the logging code
+
+seed: 1234
+out_dir: output
+default_device: cuda:0
+
+# for better dataloading parallelism
+prefetch_factor: 4
+num_workers: 32
+
+sigma: 0.01 # Used in HL Gassuian loss

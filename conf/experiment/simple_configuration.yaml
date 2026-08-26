@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - /meta_dataset@train_meta_dataset: synthetic_backdoor
+  - _self_
+  - /callbacks@callbacks.checkpoint: checkpoint # add the checkpointing callback
+  - /callbacks@callbacks.eval_cate: eval_cate_simple # add a simple evaluation of heterogeneous CATE
+
+train_meta_dataset:
+  device: cpu
+  n_samples: 2048

@@ -1,0 +1,2 @@
+enabled: true
+checkpoint_path: null # exact existing .pt file to read when resuming

@@ -62,6 +62,8 @@ class CausalEstimator(ABC):
         model_path (str): The path to the model checkpoint. Can be:
             - A local file path
             - A Hugging Face model path
+        icl_model (InContextModel, optional): An in-memory model, used by
+            training callbacks when ``model_path`` is ``None``.
         cache_dir (str, optional): Directory to cache downloaded models from Hugging Face.
             Defaults to ~/.cache/causalpfn.
         calibrate (bool): Whether to calibrate the model's temperature using n-fold cross-validation.
@@ -90,7 +92,7 @@ class CausalEstimator(ABC):
     def __init__(
         self,
         device: str,
-        model_path: str = "vdblm/causalpfn",
+        model_path: str | None = "vdblm/causalpfn",
         max_context_length: int = 4096,
         max_query_length: int = 4096,
         num_neighbours: int = 1024,
@@ -104,10 +106,11 @@ class CausalEstimator(ABC):
         ICE_n_samples: int = 1000,
         verbose: bool = False,
         cache_dir: str | None = None,
+        icl_model: InContextModel | None = None,
     ):
         self.model_path = model_path
         self.cache_dir = cache_dir if cache_dir is not None else os.path.join(Path.home(), ".cache", "causalpfn")
-        self.icl_model: InContextModel = None
+        self.icl_model = icl_model
 
         self.device = device
         self.max_context_length = max_context_length
@@ -144,18 +147,21 @@ class CausalEstimator(ABC):
         """
         Load the model from the specified path or download it from Hugging Face.
         """
-        model_path = self.model_path
+        if self.model_path is not None:
+            model_path = self.model_path
+            if is_hf_model_path(model_path):
+                model_path = download_from_hf_hub(model_path, self.cache_dir)
 
-        # Check if the model path is a Hugging Face model path
-        if is_hf_model_path(model_path):
-            model_path = download_from_hf_hub(model_path, self.cache_dir)
+            ckpt = torch.load(model_path, weights_only=False, map_location="cpu")
+            model_state = ckpt["model_state_dict"]
+            config = ckpt["model_config"]
+            self.icl_model = InContextModel.load(model_state=model_state, model_config=config)
+        elif self.icl_model is not None:
+            config = self.icl_model.model_config
+        else:
+            raise ValueError("Either model_path or icl_model must be provided.")
 
-        # Load the model from the local path
-        ckpt = torch.load(model_path, weights_only=False, map_location="cpu")
-        model_state = ckpt["model_state_dict"]
-        config = ckpt["model_config"]
-
-        self.icl_model = InContextModel.load(model_state=model_state, model_config=config).to(self.device)
+        self.icl_model.to(self.device)
 
         if config["model_type"] == "tabdpt":
             self.max_feature_size = config["model"]["max_num_features"] - 1

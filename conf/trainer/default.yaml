@@ -1,0 +1,8 @@
+max_epochs: 2048
+num_model_updates: 128
+
+grad_clip: 1.0
+
+min_train_data_split: 0.333 # NOTE: 0.1 is a little unstable for us, so we are using 0.333
+max_train_data_split: 0.666
+overlap_threshold: 0.01

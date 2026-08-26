@@ -1,0 +1,35 @@
+_target_: benchmarks.PolynomialDataset
+x_dim_dist:
+  _target_: causalpfn.synthetic.UniformIntegerSampler
+  low: 10
+  high: 20
+noise_samplers:
+  _target_: omegaconf.OmegaConf.to_container # hack to turn ListConfig to a list
+  cfg:
+    - _target_: causalpfn.synthetic.GaussianSampler
+      loc: 0.0
+      scale: 1.0
+    - _target_: causalpfn.synthetic.UniformSampler
+      low: -1.0
+      high: 1.0
+    - _target_: causalpfn.synthetic.LaplaceSampler
+      loc: 0.0
+      scale: 0.1
+weight_sampler:
+  _target_: causalpfn.synthetic.UniformSampler
+  low: -5.
+  high: 5.
+covariate_sampler:
+  _target_: causalpfn.synthetic.UniformSampler
+  low: -2.
+  high: 2.
+degree_sampler:
+  _target_: causalpfn.synthetic.UniformIntegerSampler
+  low: 3
+  high: 3
+standardize_treatment: true
+standardize_outcome: true
+n_samples: 2048
+seed: 948
+test_ratio: 0.2
+n_tables: 10

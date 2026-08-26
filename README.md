@@ -47,6 +47,7 @@ CausalPFN leverages the power of transformer architectures for amortized causal 
 - **⚡ GPU Accelerated**: Optimized for modern hardware with CUDA support
 - **📈 Benchmarked**: Competitive performance against state-of-the-art causal inference methods
 - **📊 Uplift-Modelling**: Supports treatment effect estimation for personalized decision-making in real-world applications
+- **🧠 Public Training Pipeline**: Includes the causal priors, loss, checkpointing, and distributed training
 
 ## Installation
 
@@ -153,6 +154,9 @@ Explore our notebook collection below. Before running the notebooks, make sure t
 ## Reproducibility
 
 To fully reproduce the [paper](https://arxiv.org/abs/2506.07918) results, see the [REPRODUCE](https://github.com/vdblm/CausalPFN/blob/main/REPRODUCE.md) file.
+
+The causal training stage is now public. See [TRAINING.md](TRAINING.md) for causal priors, Hydra configurations,
+checkpoint/resume flow, and distributed training commands.
 
 ## Citation
 
