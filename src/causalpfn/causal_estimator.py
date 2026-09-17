@@ -4,9 +4,9 @@ from abc import ABC
 from pathlib import Path
 from typing import Dict, Literal
 
-import faiss
 import numpy as np
 import torch
+import faiss
 from huggingface_hub import hf_hub_download
 from sklearn.decomposition import TruncatedSVD
 from sklearn.ensemble import GradientBoostingRegressor
@@ -519,6 +519,7 @@ class CATEEstimator(CausalEstimator):
             torch.from_numpy(ate_samples).float(), alphas=torch.tensor([alpha]).float()
         )
         return {
+            "ate": ate_samples.mean(),
             "cate_lower_bound": lower_bound.numpy(),
             "cate_upper_bound": upper_bound.numpy(),
             "ate_lower_bound": ate_lower_bound.numpy(),
