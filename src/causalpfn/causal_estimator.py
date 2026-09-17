@@ -4,7 +4,6 @@ from abc import ABC
 from pathlib import Path
 from typing import Dict, Literal
 
-import faiss
 import numpy as np
 import torch
 from huggingface_hub import hf_hub_download
@@ -13,6 +12,7 @@ from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.preprocessing import FunctionTransformer, OneHotEncoder
 from tqdm import tqdm
 
+from ._flat_l2 import IndexFlatL2
 from .models import InContextModel
 from .utils import sample_confidence_interval
 
@@ -194,14 +194,14 @@ class CausalEstimator(ABC):
         query_effects = self._estimate_cate_weak_learner(X_test=X_query)
         query_indices_sorted = np.argsort(query_effects)
 
-        index_treatment = faiss.IndexFlatL2(1)
+        index_treatment = IndexFlatL2(1)
         index_treatment.add(
             np.ascontiguousarray(context_treatment_group_effects.reshape(-1, 1).copy(), dtype=np.float32)
         )
         _, query_neighbour_indices_treatment = index_treatment.search(
             np.ascontiguousarray(query_effects.reshape(-1, 1).copy(), dtype=np.float32), k=self.num_neighbours
         )
-        index_control = faiss.IndexFlatL2(1)
+        index_control = IndexFlatL2(1)
         index_control.add(np.ascontiguousarray(context_control_group_effects.reshape(-1, 1).copy(), dtype=np.float32))
         _, query_neighbour_indices_control = index_control.search(
             np.ascontiguousarray(query_effects.reshape(-1, 1).copy(), dtype=np.float32), k=self.num_neighbours
@@ -519,6 +519,7 @@ class CATEEstimator(CausalEstimator):
             torch.from_numpy(ate_samples).float(), alphas=torch.tensor([alpha]).float()
         )
         return {
+            "ate": ate_samples.mean(),
             "cate_lower_bound": lower_bound.numpy(),
             "cate_upper_bound": upper_bound.numpy(),
             "ate_lower_bound": ate_lower_bound.numpy(),
