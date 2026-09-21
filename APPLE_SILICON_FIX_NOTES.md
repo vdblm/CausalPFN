@@ -86,6 +86,23 @@ the downstream repo didn't just set that instead).
 See each script's own docstring/comments for exact setup commands
 (isolated `uv venv`s, install-from-local-branch, etc.).
 
+### Real test suite added (this repo had none)
+
+`tests/` now has 13 pytest tests, ported from Max De Marzi's 16-test suite
+against the downstream `cfms` repo's workaround (`layer6ai-labs/cfms#2`),
+adapted to test this package directly:
+- `test_flat_l2.py` — unit tests + real-faiss cross-check (torch-free
+  subprocess), 7 tests
+- `test_apple_silicon.py` — end-to-end `CATEEstimator`/`ATEEstimator` on
+  Apple Silicon, 3 tests (`slow`, downloads weights)
+- `test_estimate_ate_ci.py` — the downstream repo's "still broken"
+  regression test inverted into a positive correctness test, 3 tests
+  (1 fast, 2 `slow`)
+
+All 13 pass on real Apple Silicon: `pytest tests/` from the repo root
+(needs `pip install -e . pytest`, plus `faiss-cpu` if you want the
+cross-check to actually run rather than skip).
+
 ## Before opening the PR
 
 - [ ] Re-run all three verification scripts fresh (don't trust a stale
