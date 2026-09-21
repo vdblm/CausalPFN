@@ -55,6 +55,12 @@ class IndexFlatL2:
     def ntotal(self) -> int:
         return int(self._xb.shape[0])
 
+    def train(self, x) -> None:  # noqa: ARG002 - flat indexes need no training
+        return None
+
+    def reset(self) -> None:
+        self._xb = np.empty((0, self.d), dtype=np.float32)
+
     def add(self, x) -> None:
         xb = np.ascontiguousarray(x, dtype=np.float32)
         if xb.ndim != 2 or xb.shape[1] != self.d:

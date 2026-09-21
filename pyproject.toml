@@ -49,6 +49,12 @@ dev = [
   "FLAML[automl]==2.3.5"
 ]
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "slow: downloads pretrained weights or runs a full model pass",
+]
+
 [tool.isort]
 skip = [
     "venv/",
