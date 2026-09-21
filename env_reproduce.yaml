@@ -16,7 +16,6 @@ dependencies:
   - lightgbm=4.6.0
   - xgboost=3.0.1
   - catboost=1.2.8
-  - faiss-cpu=1.9.0
   # ---- Experiment tracking / plotting -----------------------------------
   - matplotlib-base=3.10.3
   - tqdm=4.67.1
