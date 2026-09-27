@@ -17,7 +17,6 @@ dependencies = [
   "torch>=2.0",
   "numpy>=1.24",
   "tqdm",
-  "faiss-cpu>=1.9.0",
   "scikit-learn>=1.5.2",
   "huggingface_hub"
 ]
@@ -40,7 +39,6 @@ dev = [
   "econml==0.15.1",
   "huggingface_hub==0.32.4",
   "tqdm==4.67.1",
-  "faiss-cpu==1.9.0",
   "pytest==8.4.0",
   "black==25.1.0",
   "isort==6.0.1",
@@ -52,6 +50,11 @@ dev = [
   "scikit-uplift==0.5.1",
   "python-dotenv==1.1.0",
   "FLAML[automl]==2.3.5"
+]
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: downloads pretrained weights or runs a full model pass",
 ]
 
 [tool.isort]

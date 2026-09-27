@@ -61,7 +61,6 @@ pip install causalpfn
 - NumPy
 - scikit-learn
 - tqdm
-- faiss-cpu
 - huggingface_hub
 
 ## Quick Start

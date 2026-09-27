@@ -12,9 +12,21 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    name: test
-    runs-on: ubuntu-latest
+  test_suite:
+    name: ${{ matrix.name }}
+    strategy:
+      matrix:
+        include:
+          - name: Linux fast tests
+            os: ubuntu-latest
+            pytest_args: -m "not slow"
+          - name: Apple Silicon fast tests
+            os: macos-latest
+            pytest_args: -m "not slow"
+          - name: Apple Silicon model tests
+            os: macos-latest
+            pytest_args: -m slow
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Check out repository
@@ -31,4 +43,15 @@ jobs:
           python -m pip install -e ".[test]"
 
       - name: Run tests
-        run: python -m pytest -q
+        run: python -m pytest -q ${{ matrix.pytest_args }}
+
+  test:
+    if: always()
+    needs: test_suite
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check test suite result
+        env:
+          RESULT: ${{ needs.test_suite.result }}
+        run: test "$RESULT" = success
