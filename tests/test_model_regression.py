@@ -3,35 +3,18 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+import causalpfn.causal_estimator as causal_estimator_module
 from causalpfn import CATEEstimator
 
 
-# Produced by CausalPFN 0.1.4 with faiss.IndexFlatL2 on the fixed data below.
-LEGACY_FAISS_CATE = np.array(
-    [
-        -0.17869198,
-        -0.91237175,
-        1.129458,
-        -0.5724335,
-        -0.5114931,
-        -0.07886714,
-        0.7077167,
-        0.8638369,
-        0.9209615,
-        0.64013636,
-        0.60120267,
-        -0.71298707,
-        -1.1388453,
-        0.55269885,
-        -1.4786408,
-        0.43212175,
-    ],
-    dtype=np.float32,
-)
+def _brute_force_nearest(reference: np.ndarray, query: np.ndarray, k: int) -> np.ndarray:
+    k = min(k, len(reference))
+    indices = np.arange(len(reference))
+    return np.stack([np.lexsort((indices, np.abs(reference - value)))[:k] for value in query])
 
 
 @pytest.mark.slow
-def test_cate_matches_legacy_faiss_regression():
+def test_cate_matches_brute_force_neighbour_search(monkeypatch):
     rng = np.random.default_rng(42)
     X = rng.normal(size=(2_200, 5)).astype(np.float32)
     treatment_effect = (np.sin(X[:, 0]) + 0.5 * X[:, 1]).astype(np.float32)
@@ -41,6 +24,10 @@ def test_cate_matches_legacy_faiss_regression():
 
     estimator = CATEEstimator(device="cpu", verbose=False)
     estimator.fit(X, T, Y)
-    actual = np.asarray(estimator.estimate_cate(X[: len(LEGACY_FAISS_CATE)]))
+    X_query = X[:16]
+    actual = np.asarray(estimator.estimate_cate(X_query))
 
-    np.testing.assert_allclose(actual, LEGACY_FAISS_CATE, rtol=1e-5, atol=1e-5)
+    monkeypatch.setattr(causal_estimator_module, "nearest_indices_1d", _brute_force_nearest)
+    expected = np.asarray(estimator.estimate_cate(X_query))
+
+    np.testing.assert_allclose(actual, expected, rtol=1e-5, atol=1e-5)

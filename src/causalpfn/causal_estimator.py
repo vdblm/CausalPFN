@@ -194,12 +194,6 @@ class CausalEstimator(ABC):
         query_effects = self._estimate_cate_weak_learner(X_test=X_query)
         query_indices_sorted = np.argsort(query_effects)
 
-        # FAISS previously received ``self.num_neighbours`` unchanged. When an
-        # arm contained fewer rows, FAISS padded its result with ``-1`` and the
-        # code below accidentally treated that sentinel as the arm's last row.
-        # Limiting each arm to half the model context also guarantees that the
-        # combined treatment/control neighbourhood fits. The helper applies the
-        # remaining arm-size cap and therefore returns only valid row indices.
         max_neighbours_per_arm = min(self.num_neighbours, self.max_context_length // 2)
         query_neighbour_indices_treatment = nearest_indices_1d(
             context_treatment_group_effects, query_effects, k=max_neighbours_per_arm
