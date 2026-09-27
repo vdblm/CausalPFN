@@ -536,13 +536,13 @@ class CATEEstimator(CausalEstimator):
 
         Returns:
             Dict[str, np.ndarray]: A dictionary containing the confidence intervals.
-                - "lower_bound": The lower bound of the confidence interval.
-                - "upper_bound": The upper bound of the confidence interval.
+                - "lower_bound": The lower bound of the confidence interval with shape [N'].
+                - "upper_bound": The upper bound of the confidence interval with shape [N'].
         """
         output = self._estimate_ate_cate_CI(X, alpha=alpha, n_samples=n_samples)
         return {
-            "lower_bound": output["cate_lower_bound"],
-            "upper_bound": output["cate_upper_bound"],
+            "lower_bound": output["cate_lower_bound"].squeeze(axis=0),
+            "upper_bound": output["cate_upper_bound"].squeeze(axis=0),
         }
 
     def estimate_ate(self, X: np.ndarray) -> float:
