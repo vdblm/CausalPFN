@@ -15,6 +15,16 @@ def nearest_indices_1d(reference: np.ndarray, query: np.ndarray, k: int) -> np.n
 
     ``k`` is capped at the number of reference values, so no sentinel indices
     are returned.
+
+    Args:
+        reference: One-dimensional array with shape ``(n_reference,)``.
+        query: One-dimensional array with shape ``(n_query,)``.
+        k: Requested number of neighbours per query.
+
+    Returns:
+        Integer indices into ``reference`` with shape
+        ``(n_query, min(k, n_reference))``. Neighbour order within a row is not
+        part of the API; callers consume each row as a set.
     """
     reference = np.asarray(reference)
     query = np.asarray(query)

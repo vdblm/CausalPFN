@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import platform
+import subprocess
 import sys
 
 import numpy as np
@@ -10,6 +11,20 @@ from causalpfn import CATEEstimator
 
 
 APPLE_SILICON = sys.platform == "darwin" and platform.machine() == "arm64"
+
+
+def test_import_does_not_load_faiss():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            "import sys; import causalpfn; assert 'faiss' not in sys.modules",
+        ],
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
 
 
 @pytest.mark.slow

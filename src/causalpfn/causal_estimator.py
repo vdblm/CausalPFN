@@ -194,15 +194,18 @@ class CausalEstimator(ABC):
         query_effects = self._estimate_cate_weak_learner(X_test=X_query)
         query_indices_sorted = np.argsort(query_effects)
 
-        # Each arm contributes at most half of the model context. Capping by
-        # the arm size also avoids the ``-1`` padding returned by FAISS when
-        # fewer than ``num_neighbours`` observations are available.
-        num_neighbours = min(self.num_neighbours, self.max_context_length // 2)
+        # FAISS previously received ``self.num_neighbours`` unchanged. When an
+        # arm contained fewer rows, FAISS padded its result with ``-1`` and the
+        # code below accidentally treated that sentinel as the arm's last row.
+        # Limiting each arm to half the model context also guarantees that the
+        # combined treatment/control neighbourhood fits. The helper applies the
+        # remaining arm-size cap and therefore returns only valid row indices.
+        max_neighbours_per_arm = min(self.num_neighbours, self.max_context_length // 2)
         query_neighbour_indices_treatment = nearest_indices_1d(
-            context_treatment_group_effects, query_effects, k=num_neighbours
+            context_treatment_group_effects, query_effects, k=max_neighbours_per_arm
         )
         query_neighbour_indices_control = nearest_indices_1d(
-            context_control_group_effects, query_effects, k=num_neighbours
+            context_control_group_effects, query_effects, k=max_neighbours_per_arm
         )
 
         # if the query size is large, we split it into batches
@@ -528,19 +531,19 @@ class CATEEstimator(CausalEstimator):
         Estimate the conditional average treatment effect (CATE) with confidence intervals using the fitted model.
 
         Args:
-            X (np.ndarray): The input data with shape [N', D].
-            alpha (float): The significance level for the confidence interval.
+            X (np.ndarray): The query data with shape (n_queries, n_features).
+            alpha (float): The scalar significance level for the confidence interval.
             n_samples (int): The number of samples to use for estimating the confidence interval.
 
         Returns:
             Dict[str, np.ndarray]: A dictionary containing the confidence intervals.
-                - "lower_bound": The lower bound of the confidence interval.
-                - "upper_bound": The upper bound of the confidence interval.
+                - "lower_bound": The lower bound of the confidence interval with shape (n_queries,).
+                - "upper_bound": The upper bound of the confidence interval with shape (n_queries,).
         """
         output = self._estimate_ate_cate_CI(X, alpha=alpha, n_samples=n_samples)
         return {
-            "lower_bound": output["cate_lower_bound"],
-            "upper_bound": output["cate_upper_bound"],
+            "lower_bound": output["cate_lower_bound"].squeeze(axis=0),
+            "upper_bound": output["cate_upper_bound"].squeeze(axis=0),
         }
 
     def estimate_ate(self, X: np.ndarray) -> float:

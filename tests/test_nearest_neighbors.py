@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import tracemalloc
+
 import numpy as np
 import pytest
 
@@ -46,16 +48,21 @@ def test_k_is_capped_without_sentinel_indices():
     np.testing.assert_array_equal(np.sort(actual, axis=1), [[0, 1], [0, 1], [0, 1]])
 
 
-def test_large_search_does_not_materialize_pairwise_distances():
+def test_search_memory_scales_with_output_not_pairwise_product():
     rng = np.random.default_rng(0)
-    reference = rng.normal(size=50_000)
-    query = rng.normal(size=10_000)
+    reference = rng.normal(size=10_000)
+    query = rng.normal(size=2_000)
 
+    tracemalloc.start()
     actual = nearest_indices_1d(reference, query, k=32)
+    _, peak_bytes = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
 
-    assert actual.shape == (10_000, 32)
+    pairwise_bytes = reference.size * query.size * np.dtype(np.float64).itemsize
+    assert actual.shape == (2_000, 32)
     assert actual.min() >= 0
     assert actual.max() < len(reference)
+    assert peak_bytes < pairwise_bytes // 10
 
 
 @pytest.mark.parametrize("k", [0, -1, 1.5, True])

@@ -1,28 +1,30 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
+import torch
 
 from causalpfn import CATEEstimator
 
 
-def test_estimate_ate_ci_uses_the_deterministic_point_estimate(monkeypatch):
+@pytest.mark.slow
+def test_estimate_ate_ci_matches_real_point_estimate():
+    rng = np.random.default_rng(1)
+    X = rng.normal(size=(180, 5)).astype(np.float32)
+    T = np.concatenate([np.zeros(150), np.ones(30)]).astype(np.float32)
+    Y = (0.5 * X[:, 0] + 0.8 * T + rng.normal(size=len(X))).astype(np.float32)
+    X_query = X[T == 1][:8]
+
     estimator = CATEEstimator(device="cpu", verbose=False)
-    X = np.zeros((3, 2), dtype=np.float32)
-    expected_lower = np.array([-0.5])
-    expected_upper = np.array([1.5])
+    estimator.fit(X, T, Y)
+    expected_ate = estimator.estimate_ate(X_query)
 
-    monkeypatch.setattr(
-        estimator,
-        "_estimate_ate_cate_CI",
-        lambda X, alpha, n_samples: {
-            "ate_lower_bound": expected_lower,
-            "ate_upper_bound": expected_upper,
-        },
-    )
-    monkeypatch.setattr(estimator, "estimate_ate", lambda X: 0.75)
+    torch.manual_seed(0)
+    result = estimator.estimate_ate_CI(X_query, alpha=0.05, n_samples=32)
 
-    result = estimator.estimate_ate_CI(X, alpha=0.05, n_samples=64)
-
-    assert result["ate"] == 0.75
-    np.testing.assert_array_equal(result["lower_bound"], expected_lower)
-    np.testing.assert_array_equal(result["upper_bound"], expected_upper)
+    assert result["ate"] == expected_ate
+    assert result["lower_bound"].shape == (1,)
+    assert result["upper_bound"].shape == (1,)
+    assert np.isfinite(result["lower_bound"]).all()
+    assert np.isfinite(result["upper_bound"]).all()
+    assert result["lower_bound"][0] <= result["upper_bound"][0]

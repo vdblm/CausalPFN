@@ -2,22 +2,45 @@ name: Tests
 
 on:
   pull_request:
+    branches:
+      - main
   push:
-    branches: [main]
+    branches:
+      - main
+
+permissions:
+  contents: read
 
 jobs:
-  fast-tests:
+  test:
+    name: ${{ matrix.name }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        include:
+          - name: Linux fast tests
+            os: ubuntu-latest
+            pytest_args: -m "not slow"
+          - name: Apple Silicon fast tests
+            os: macos-latest
+            pytest_args: -m "not slow"
+          - name: Apple Silicon model tests
+            os: macos-latest
+            pytest_args: -m slow
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
         with:
           python-version: "3.10"
-          cache: pip
-      - run: python -m pip install --upgrade pip
-      - run: python -m pip install -e . pytest
-      - run: python -m pytest -m "not slow"
+
+      - name: Install package and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[test]"
+
+      - name: Run tests
+        run: python -m pytest -q ${{ matrix.pytest_args }}

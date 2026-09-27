@@ -29,6 +29,9 @@ where = ["src"]
 
 
 [project.optional-dependencies]
+test = [
+  "pytest==8.4.0",
+]
 dev = [
   "torch==2.3.1",
   "numpy==1.26.4",
@@ -50,7 +53,6 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
 markers = [
     "slow: downloads pretrained weights or runs a full model pass",
 ]
