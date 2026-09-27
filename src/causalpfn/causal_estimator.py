@@ -530,19 +530,19 @@ class CATEEstimator(CausalEstimator):
         Estimate the conditional average treatment effect (CATE) with confidence intervals using the fitted model.
 
         Args:
-            X (np.ndarray): The input data with shape [N', D].
-            alpha (float): The significance level for the confidence interval.
+            X (np.ndarray): The query data with shape (n_queries, n_features).
+            alpha (float): The scalar significance level for the confidence interval.
             n_samples (int): The number of samples to use for estimating the confidence interval.
 
         Returns:
             Dict[str, np.ndarray]: A dictionary containing the confidence intervals.
-                - "lower_bound": The lower bound of the confidence interval.
-                - "upper_bound": The upper bound of the confidence interval.
+                - "lower_bound": The lower bound of the confidence interval with shape (n_queries,).
+                - "upper_bound": The upper bound of the confidence interval with shape (n_queries,).
         """
         output = self._estimate_ate_cate_CI(X, alpha=alpha, n_samples=n_samples)
         return {
-            "lower_bound": output["cate_lower_bound"],
-            "upper_bound": output["cate_upper_bound"],
+            "lower_bound": output["cate_lower_bound"].squeeze(axis=0),
+            "upper_bound": output["cate_upper_bound"].squeeze(axis=0),
         }
 
     def estimate_ate(self, X: np.ndarray) -> float:
