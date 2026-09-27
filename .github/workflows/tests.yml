@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  test_suite:
     name: ${{ matrix.name }}
     strategy:
       matrix:
@@ -44,3 +44,14 @@ jobs:
 
       - name: Run tests
         run: python -m pytest -q ${{ matrix.pytest_args }}
+
+  test:
+    if: always()
+    needs: test_suite
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check test suite result
+        env:
+          RESULT: ${{ needs.test_suite.result }}
+        run: test "$RESULT" = success
