@@ -12,7 +12,7 @@ from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.preprocessing import FunctionTransformer, OneHotEncoder
 from tqdm import tqdm
 
-from ._flat_l2 import IndexFlatL2
+from ._nearest_neighbors import nearest_indices_1d
 from .models import InContextModel
 from .utils import sample_confidence_interval
 
@@ -194,17 +194,15 @@ class CausalEstimator(ABC):
         query_effects = self._estimate_cate_weak_learner(X_test=X_query)
         query_indices_sorted = np.argsort(query_effects)
 
-        index_treatment = IndexFlatL2(1)
-        index_treatment.add(
-            np.ascontiguousarray(context_treatment_group_effects.reshape(-1, 1).copy(), dtype=np.float32)
+        # Each arm contributes at most half of the model context. Capping by
+        # the arm size also avoids the ``-1`` padding returned by FAISS when
+        # fewer than ``num_neighbours`` observations are available.
+        num_neighbours = min(self.num_neighbours, self.max_context_length // 2)
+        query_neighbour_indices_treatment = nearest_indices_1d(
+            context_treatment_group_effects, query_effects, k=num_neighbours
         )
-        _, query_neighbour_indices_treatment = index_treatment.search(
-            np.ascontiguousarray(query_effects.reshape(-1, 1).copy(), dtype=np.float32), k=self.num_neighbours
-        )
-        index_control = IndexFlatL2(1)
-        index_control.add(np.ascontiguousarray(context_control_group_effects.reshape(-1, 1).copy(), dtype=np.float32))
-        _, query_neighbour_indices_control = index_control.search(
-            np.ascontiguousarray(query_effects.reshape(-1, 1).copy(), dtype=np.float32), k=self.num_neighbours
+        query_neighbour_indices_control = nearest_indices_1d(
+            context_control_group_effects, query_effects, k=num_neighbours
         )
 
         # if the query size is large, we split it into batches
@@ -519,7 +517,6 @@ class CATEEstimator(CausalEstimator):
             torch.from_numpy(ate_samples).float(), alphas=torch.tensor([alpha]).float()
         )
         return {
-            "ate": ate_samples.mean(),
             "cate_lower_bound": lower_bound.numpy(),
             "cate_upper_bound": upper_bound.numpy(),
             "ate_lower_bound": ate_lower_bound.numpy(),
@@ -572,7 +569,9 @@ class CATEEstimator(CausalEstimator):
         """
         output = self._estimate_ate_cate_CI(X, alpha=alpha, n_samples=n_samples)
         return {
-            "ate": output["ate"],
+            # Keep the point estimate deterministic and consistent with the
+            # public point-estimation method. The interval itself is sampled.
+            "ate": self.estimate_ate(X),
             "lower_bound": output["ate_lower_bound"],
             "upper_bound": output["ate_upper_bound"],
         }
