@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "f64ab123b5a8b879d61522d2cc800d91989904b5",
+  "packages": {
+    ".": {
+      "release-type": "python",
+      "package-name": "causalpfn",
+      "include-component-in-tag": false,
+      "include-v-in-tag": true,
+      "bump-minor-pre-major": true
+    }
+  }
+}
